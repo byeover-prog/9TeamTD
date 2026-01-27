@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -20,6 +20,7 @@ public sealed class GridSystem : MonoBehaviour
     [FormerlySerializedAs("base_transform")]
     [SerializeField] private Transform baseTransform;
 
+    // Used only when baseTransform is missing
     [FormerlySerializedAs("base_cell")]
     [SerializeField] private Cell fallbackBaseCell = new Cell(15, 10);
 
@@ -35,9 +36,6 @@ public sealed class GridSystem : MonoBehaviour
     [FormerlySerializedAs("no_build_border_thickness")]
     [Tooltip("Cells within this border thickness from the edge cannot be built on.")]
     [SerializeField, Min(0)] private int noBuildBorderThickness = 2;
-
-    [SerializeField] private bool preventBuildNearMonster = true;
-    [SerializeField, Min(0)] private int monsterNoBuildRadiusCells = 2;
 
     [FormerlySerializedAs("prevent_build_on_monster")]
     [SerializeField] private bool preventBuildOnMonster = true;
@@ -117,6 +115,9 @@ public sealed class GridSystem : MonoBehaviour
         RebuildDistanceField(distanceToBase, assumedBlockedCell: null);
     }
 
+    // -----------------------
+    // Coordinate conversion
+    // -----------------------
     public Cell WorldToCell(Vector3 worldPosition)
     {
         int x = Mathf.FloorToInt(worldPosition.x / cellSize);
@@ -136,40 +137,35 @@ public sealed class GridSystem : MonoBehaviour
         return cell.X >= 0 && cell.X < gridWidth && cell.Y >= 0 && cell.Y < gridHeight;
     }
 
+    // -----------------------
+    // Placement queries
+    // -----------------------
     public bool IsBuildable(Cell cell)
     {
-
+        // 1) Basic bounds / static rules first
         if (!IsInside(cell))
-            return false;
+        return false;
 
         if (cell == baseCell)
-            return false;
-
-        if (IsInsideNoBuildBorder(cell))
-            return false;
+        return false;
 
         if (GetCellState(cell) != CellState.Empty)
             return false;
 
-
-        if (IsCellOccupiedByMonster(cell))
-            return false;
+        // 2) Dynamic rule: prevent building on a monster
+        //if (IsCellOccupiedByMonster(cell))
+        //    return false;
 
         return true;
     }
 
     public bool CanPlaceTower(Cell cell)
     {
+        if (!IsBuildable(cell))
+            return false;
+
         RebuildDistanceField(previewDistanceToBase, assumedBlockedCell: cell);
-
-        if (!HasAnyReachableEdgeSpawn(previewDistanceToBase, assumedBlockedCell: cell))
-            return false;
-
-        // ✅ 기존 몬스터들이 갇히는 배치면 프리뷰부터 빨강
-        if (!AreAllExistingMonstersReachable(previewDistanceToBase))
-            return false;
-
-        return true;
+        return HasAnyReachableEdgeSpawn(previewDistanceToBase, assumedBlockedCell: cell);
     }
 
     public bool TryPlaceTower(Cell cell)
@@ -185,23 +181,15 @@ public sealed class GridSystem : MonoBehaviour
 
         if (!HasAnyReachableEdgeSpawn(distanceToBase, assumedBlockedCell: null))
         {
+            // Rollback
             SetCellState(cell, CellState.Empty);
             RebuildDistanceField(distanceToBase, assumedBlockedCell: null);
 
             Debug.Log($"[GridSystem] TryPlaceTower failed (WouldBlockAllSpawns) cell={cell}");
             return false;
         }
-        if (!AreAllExistingMonstersReachable(distanceToBase))
-        {
-            // Rollback
-            SetCellState(cell, CellState.Empty);
-            RebuildDistanceField(distanceToBase, assumedBlockedCell: null);
 
-            Debug.Log($"[GridSystem] TryPlaceTower failed (WouldTrapMonsters) cell={cell}");
-            return false;
-        }
-
-        SpawnTowerVisual(cell);
+        //SpawnTowerVisual(cell);
         Debug.Log($"[GridSystem] TryPlaceTower success cell={cell}");
         return true;
     }
@@ -228,53 +216,26 @@ public sealed class GridSystem : MonoBehaviour
         return true;
     }
 
-    private bool AreAllExistingMonstersReachable(int[] distanceField)
-    {
-        // 배치 시에만 호출되므로 FindObjectsOfType 사용해도 부담이 적음
-        MonsterAgent[] monsters = FindObjectsOfType<MonsterAgent>();
-
-        for (int i = 0; i < monsters.Length; i++)
-        {
-            MonsterAgent m = monsters[i];
-            if (m == null) continue;
-
-            Cell monsterCell = WorldToCell(m.transform.position);
-
-            // 그리드 밖이면 일단 스킵(스폰 직후 튕김 방지)
-            if (!IsInside(monsterCell))
-                continue;
-
-            // 베이스까지 도달 불가면 "가두기"가 된 상태
-            if (GetDistance(distanceField, monsterCell) == -1)
-                return false;
-        }
-
-        return true;
-    }
+    // -----------------------
+    // Monster occupancy (dynamic rule)
+    // -----------------------
     public bool IsCellOccupiedByMonster(Cell cell)
     {
-        if (!preventBuildOnMonster && !preventBuildNearMonster)
+        if (!preventBuildOnMonster)
             return false;
 
+        // Only check physics while playing
         if (!Application.isPlaying)
             return false;
 
+        // Defensive check (in case called elsewhere)
         if (!IsInside(cell))
             return false;
 
         Vector3 center = CellToWorld(cell, y: monsterCheckY);
 
-        float halfX = cellSize * 0.45f;
-        float halfZ = cellSize * 0.45f;
-
-        if (preventBuildNearMonster && monsterNoBuildRadiusCells > 0)
-        {
-            float expand = cellSize * monsterNoBuildRadiusCells;
-            halfX += expand;
-            halfZ += expand;
-        }
-
-        Vector3 halfExtents = new Vector3(halfX, monsterCheckHalfHeight, halfZ);
+        // IMPORTANT: use cellSize (NOT cell_size)
+        Vector3 halfExtents = new Vector3(cellSize * 0.45f, monsterCheckHalfHeight, cellSize * 0.45f);
 
         int hitCount = Physics.OverlapBoxNonAlloc(
             center,
@@ -288,6 +249,9 @@ public sealed class GridSystem : MonoBehaviour
         return hitCount > 0;
     }
 
+    // -----------------------
+    // Spawn / path following
+    // -----------------------
     public bool TryGetRandomSpawnCell(out Cell spawnCell)
     {
         CollectReachableEdgeCells(edgeSpawnBuffer);
@@ -313,9 +277,9 @@ public sealed class GridSystem : MonoBehaviour
 
         int currentDistance = GetDistance(distanceToBase, currentCell);
         if (currentDistance <= 0)
-            return false; 
+            return false; // 0 = base, -1 = unreachable
 
-
+        // Straight-first
         if (lastDir != Vector2Int.zero)
         {
             Cell straightCell = new Cell(currentCell.X + lastDir.x, currentCell.Y + lastDir.y);
@@ -327,6 +291,7 @@ public sealed class GridSystem : MonoBehaviour
             }
         }
 
+        // Fallback: fixed priority
         for (int i = 0; i < CardinalDirections.Length; i++)
         {
             Vector2Int dir = CardinalDirections[i];
@@ -346,10 +311,12 @@ public sealed class GridSystem : MonoBehaviour
         return false;
     }
 
-
+    // -----------------------
+    // Internal setup
+    // -----------------------
     private void ResolveReferencesIfNeeded()
     {
-        if (baseTransform != null)
+        if (baseTransform == null)
             return;
 
         try
@@ -360,7 +327,7 @@ public sealed class GridSystem : MonoBehaviour
         }
         catch (UnityException)
         {
-
+            // Tag missing is fine; fallbackBaseCell will be used.
         }
     }
 
@@ -424,20 +391,9 @@ public sealed class GridSystem : MonoBehaviour
         baseTransform.position = aligned;
     }
 
-    private bool IsInsideNoBuildBorder(Cell cell)
-    {
-        if (noBuildBorderThickness <= 0)
-            return false;
-
-        if (cell.X < noBuildBorderThickness) return true;
-        if (cell.Y < noBuildBorderThickness) return true;
-        if (cell.X >= gridWidth - noBuildBorderThickness) return true;
-        if (cell.Y >= gridHeight - noBuildBorderThickness) return true;
-
-        return false;
-    }
-
-
+    // -----------------------
+    // Grid storage helpers
+    // -----------------------
     private int ToIndex(Cell cell) => cell.Y * gridWidth + cell.X;
 
     private CellState GetCellState(Cell cell) => cellStates[ToIndex(cell)];
@@ -453,7 +409,9 @@ public sealed class GridSystem : MonoBehaviour
         return state == CellState.Empty || state == CellState.Base;
     }
 
-
+    // -----------------------
+    // BFS distance field (Pathfinding)
+    // -----------------------
     private int GetDistance(int[] distanceField, Cell cell) => distanceField[ToIndex(cell)];
 
     private void RebuildDistanceField(int[] outDistanceField, Cell? assumedBlockedCell)
@@ -498,15 +456,19 @@ public sealed class GridSystem : MonoBehaviour
         }
     }
 
+    // -----------------------
+    // Edge spawn validation
+    // -----------------------
     private bool HasAnyReachableEdgeSpawn(int[] distanceField, Cell? assumedBlockedCell)
     {
-
+        // Top row
         for (int x = 0; x < gridWidth; x++)
         {
             if (IsReachableSpawnCell(new Cell(x, 0), distanceField, assumedBlockedCell))
                 return true;
         }
 
+        // Bottom row
         int bottomY = gridHeight - 1;
         if (bottomY != 0)
         {
@@ -517,6 +479,7 @@ public sealed class GridSystem : MonoBehaviour
             }
         }
 
+        // Left/right columns without corners
         for (int y = 1; y < gridHeight - 1; y++)
         {
             if (IsReachableSpawnCell(new Cell(0, y), distanceField, assumedBlockedCell))
@@ -545,11 +508,11 @@ public sealed class GridSystem : MonoBehaviour
     {
         buffer.Clear();
 
-
+        // Top row
         for (int x = 0; x < gridWidth; x++)
             AddIfReachableSpawnCell(new Cell(x, 0), buffer);
 
-     
+        // Bottom row
         int bottomY = gridHeight - 1;
         if (bottomY != 0)
         {
@@ -557,7 +520,7 @@ public sealed class GridSystem : MonoBehaviour
                 AddIfReachableSpawnCell(new Cell(x, bottomY), buffer);
         }
 
-    
+        // Left/right columns without corners
         int rightX = gridWidth - 1;
         for (int y = 1; y < gridHeight - 1; y++)
         {
@@ -578,6 +541,10 @@ public sealed class GridSystem : MonoBehaviour
 
         buffer.Add(cell);
     }
+
+    // -----------------------
+    // Tower visuals
+    // -----------------------
     private void SpawnTowerVisual(Cell cell)
     {
         int index = ToIndex(cell);
@@ -604,6 +571,10 @@ public sealed class GridSystem : MonoBehaviour
         towerObj.name = $"Tower_{cell.X}_{cell.Y}";
         towerVisualByIndex[index] = towerObj;
     }
+
+    // -----------------------
+    // Gizmos
+    // -----------------------
     private void OnDrawGizmos()
     {
         if (!drawGridGizmos)

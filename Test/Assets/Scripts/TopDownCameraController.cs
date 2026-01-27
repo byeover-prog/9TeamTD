@@ -4,7 +4,7 @@ using UnityEngine.Serialization;
 [ExecuteAlways]
 public sealed class TopDownCameraController : MonoBehaviour
 {
-    private const string BaseTag = "Base";
+    private const string BaseTag = "Player";
 
     [Header("References")]
     [FormerlySerializedAs("target_camera")]
@@ -25,27 +25,11 @@ public sealed class TopDownCameraController : MonoBehaviour
     [Tooltip("Extra padding so the grid is not clipped by screen edges.")]
     [SerializeField, Min(0f)] private float worldPadding = 2f;
 
-    private void Reset()
+    private void Awake()
     {
         controlledCamera = GetComponent<Camera>();
         if (controlledCamera == null)
             controlledCamera = Camera.main;
-    }
-
-    private void OnEnable() => Apply();
-    private void Update() => Apply();
-    private void OnValidate() => Apply();
-
-    private void Apply()
-    {
-        if (controlledCamera == null)
-            controlledCamera = GetComponent<Camera>();
-
-        if (controlledCamera == null)
-            controlledCamera = Camera.main;
-
-        if (controlledCamera == null)
-            return;
 
         if (baseTarget == null)
         {
@@ -61,12 +45,16 @@ public sealed class TopDownCameraController : MonoBehaviour
             }
         }
 
-        if (gridSystem == null)
-            gridSystem = FindObjectOfType<GridSystem>();
-
         if (!controlledCamera.orthographic)
             controlledCamera.orthographic = true;
+    }
 
+    private void OnEnable() => Apply();
+    private void Update() => Apply();
+    private void OnValidate() => Apply();
+
+    private void Apply()
+    {
         // Center camera on base (or base cell)
         Vector3 desired = controlledCamera.transform.position;
 
