@@ -520,7 +520,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   nowSlot: 0
-  continueButton: {fileID: 1005065337}
 --- !u!4 &846892834
 Transform:
   m_ObjectHideFlags: 0
@@ -663,6 +662,7 @@ GameObject:
   - component: {fileID: 1059008554}
   - component: {fileID: 1059008553}
   - component: {fileID: 1059008557}
+  - component: {fileID: 1059008558}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -770,6 +770,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7f986c1d18553134d9edc0ffe2654777, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1059008558
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1059008552}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e3b6744be40f9544ab85acebf55c7fee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  continueButton: {fileID: 1005065337}
 --- !u!1 &1083862881
 GameObject:
   m_ObjectHideFlags: 0
