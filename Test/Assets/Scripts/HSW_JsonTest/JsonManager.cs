@@ -10,9 +10,14 @@ public class JsonManager : MonoBehaviour
 {
     public static JsonManager instanceJsonManger { get; private set; }
 
+    [Header("대상의 정보")]
     [SerializeField] private int targetID = 0;
     [SerializeField] private int targetLevel = 0;
-    [SerializeField] private string dataFilePath = "";
+
+    [Header("Json 파일 경로")]
+    [SerializeField] private string dataFilePath = "";  // Json 파일 경로
+
+
     private TowerDataList _towerData;   // TowerStats 의 데이터를 불러오면 됨
 
     private void Awake()
@@ -35,56 +40,6 @@ public class JsonManager : MonoBehaviour
     public void Start()
     {
         ChangeID(targetID, targetLevel);
-
-        /*
-        // 1. Resources 폴더에서 JSON 파일 로드
-        // Assets 폴더 밑에 "Resources" 라는 이름의 폴더를 만들고, 그 안에 PlayerData.json 파일을 넣어주세요.
-        TextAsset jsonDataFile = Resources.Load<TextAsset>("TowerData"); // 파일 이름만 (확장자 제외)
-
-        if (jsonDataFile != null)
-        {
-            towerDataList dataContainer = JsonUtility.FromJson<towerDataList>(jsonDataFile.text);
-
-
-            string jsonString = jsonDataFile.text;
-            Debug.Log("로드된 JSON 원본: " + jsonString);
-
-            // 2. JSON 문자열을 PlayerData 객체로 변환 (역직렬화)
-            TowerStats towerData = JsonUtility.FromJson<TowerStats>(jsonString);
-
-            // 3. 데이터 활용
-            if (towerData != null)
-            {
-                // 하이어라키에 있는 PlayerStats 스크립트를 가진 오브젝트를 찾습니다.
-                // (현업에서는 보통 싱글톤이나 인스펙터 할당 방식을 사용하지만, 여기서는 직관적인 Get/Find를 사용합니다.)
-                TowerStats towerData = FindFirstObjectByType<TowerStats>();
-
-                if (towerData != null)
-                {
-                    // 로드한 데이터를 플레이어 실제 스텟 스크립트에 전달합니다.
-                    towerData.Setup(towerData);
-                }
-                else
-                {
-                    Debug.LogWarning("씬 내에 PlayerStats 스크립트를 가진 오브젝트가 없습니다.");
-                }
-            }
-            else
-            {
-                Debug.LogError("JSON 파싱 실패!");
-            }
-
-            // (선택) PlayerData 객체를 다시 JSON 문자열로 변환 (직렬화)
-            // true를 넣으면 예쁘게 정렬된 형태로 출력됩니다.
-            string newJsonString = JsonUtility.ToJson(towerData, true);
-            Debug.Log("다시 직렬화된 JSON: " + newJsonString);
-
-        }
-        else
-        {
-            Debug.LogError("Resources 폴더에서 PlayerData.json 파일을 찾을 수 없습니다!");
-        }
-        */
     }
 
     private void LoadJsonFile()
@@ -101,6 +56,7 @@ public class JsonManager : MonoBehaviour
     }
 
     // 원하는 ID를 타워에 전달하는 역할
+    // 추후 오버로딩 해서 다양한 케이스에서 사용할 수 있도록 수정할 필요 있음
     public void ChangeID(int id, int level)
     {
         if (_towerData == null) return; // 타워 데이터에 없으면 리턴
