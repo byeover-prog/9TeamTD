@@ -47,20 +47,10 @@ public class SaveManager : MonoBehaviour
 
     public void LoadData()
     {
-        if (File.Exists(GetPath(nowSlot)))
-        {
-            string json = File.ReadAllText(GetPath(nowSlot));
-            
-            JsonUtility.FromJsonOverwrite(json, nowPlayer);
-            
-            nowPlayer.gold ??= new OP<int>();
-        }
-        else
-        {
-#if UNITY_EDITOR
-            Debug.Log("파일을 불러올수 없습니다");
-#endif
-        }
+        //if (File.Exists(GetPath(nowSlot)))
+        string json = File.ReadAllText(GetPath(nowSlot));
+
+        JsonUtility.FromJsonOverwrite(json, nowPlayer);
     }
 
     public bool LoadDataForPreview(int slotNum)
