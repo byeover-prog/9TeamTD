@@ -3,7 +3,14 @@
         {
             "towerID": 1001,
             "towerName": "수정탑",
-            "level": 5,
+            "level": 1,
+            "maxHP": 80,
+            "attackValue": 20
+        },
+        {
+            "towerID": 1001,
+            "towerName": "수정탑",
+            "level": 2,
             "maxHP": 80,
             "attackValue": 20
         },

@@ -152,6 +152,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   targetID: 1001
+  targetLevel: 3
+  dataFilePath: Datas/TowerData
 --- !u!4 &139544809
 Transform:
   m_ObjectHideFlags: 0

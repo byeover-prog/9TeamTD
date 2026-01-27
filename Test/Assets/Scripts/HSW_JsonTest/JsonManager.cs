@@ -11,6 +11,8 @@ public class JsonManager : MonoBehaviour
     public static JsonManager instanceJsonManger { get; private set; }
 
     [SerializeField] private int targetID = 0;
+    [SerializeField] private int targetLevel = 0;
+    [SerializeField] private string dataFilePath = "";
     private TowerDataList _towerData;   // TowerStats 의 데이터를 불러오면 됨
 
     private void Awake()
@@ -32,7 +34,7 @@ public class JsonManager : MonoBehaviour
 
     public void Start()
     {
-        ChangeID(targetID);
+        ChangeID(targetID, targetLevel);
 
         /*
         // 1. Resources 폴더에서 JSON 파일 로드
@@ -87,7 +89,7 @@ public class JsonManager : MonoBehaviour
 
     private void LoadJsonFile()
     {
-        TextAsset jsonDataFile = Resources.Load<TextAsset>("Datas/TowerData");    // TextAsset(텍스트 파일 형식) 으로 리소스 폴더 하위 경로에서 TowerData 파일을 불러옴
+        TextAsset jsonDataFile = Resources.Load<TextAsset>(dataFilePath);    // TextAsset(텍스트 파일 형식) 으로 리소스 폴더 하위 경로에서 TowerData 파일을 불러옴//TextAsset jsonDataFile = Resources.Load<TextAsset>("Datas/TowerData");    // TextAsset(텍스트 파일 형식) 으로 리소스 폴더 하위 경로에서 TowerData 파일을 불러옴
         if (jsonDataFile != null)
         {
             _towerData = JsonUtility.FromJson<TowerDataList>(jsonDataFile.text);    // JsonUtility 활용해 TowerDataList 역직렬화
@@ -99,12 +101,12 @@ public class JsonManager : MonoBehaviour
     }
 
     // 원하는 ID를 타워에 전달하는 역할
-    public void ChangeID(int id)
+    public void ChangeID(int id, int level)
     {
         if (_towerData == null) return; // 타워 데이터에 없으면 리턴
 
-        // TowerDataList에서 해당 ID 찾기
-        TowerDatas foundData = _towerData.towers.Find(t => t.towerID == id);
+        // TowerDataList에서 해당 레벨의 ID값의 캐릭터 찾기
+        TowerDatas foundData = _towerData.towers.Find(t => t.towerID == id && t.level == level);
 
         if (foundData != null)
         {
@@ -116,7 +118,7 @@ public class JsonManager : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning($"ID {id}에 해당하는 데이터 없음");
+            Debug.LogWarning($"ID {id}나 {level} 레벨에 해당하는 데이터 없음");
         }
     }
 }
