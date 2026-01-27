@@ -1,4 +1,5 @@
-﻿[
+﻿{
+  "towers": [
   {
     "towerID": 1100,
     "towerName": "수정탑",
@@ -220,3 +221,4 @@
     "attackSpeed": 0.25
   }
 ]
+}
