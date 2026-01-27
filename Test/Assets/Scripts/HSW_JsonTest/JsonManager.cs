@@ -87,10 +87,10 @@ public class JsonManager : MonoBehaviour
 
     private void LoadJsonFile()
     {
-        TextAsset jsonDataFile = Resources.Load<TextAsset>("TowerData");
+        TextAsset jsonDataFile = Resources.Load<TextAsset>("Datas/TowerData");    // TextAsset(텍스트 파일 형식) 으로 리소스 폴더 하위 경로에서 TowerData 파일을 불러옴
         if (jsonDataFile != null)
         {
-            _towerData = JsonUtility.FromJson<TowerDataList>(jsonDataFile.text);
+            _towerData = JsonUtility.FromJson<TowerDataList>(jsonDataFile.text);    // JsonUtility 활용해 TowerDataList 역직렬화
         }
         else
         {
@@ -98,19 +98,20 @@ public class JsonManager : MonoBehaviour
         }
     }
 
+    // 원하는 ID를 타워에 전달하는 역할
     public void ChangeID(int id)
     {
-        if (_towerData == null) return;
+        if (_towerData == null) return; // 타워 데이터에 없으면 리턴
 
-        // 리스트에서 해당 ID 찾기
+        // TowerDataList에서 해당 ID 찾기
         TowerDatas foundData = _towerData.towers.Find(t => t.towerID == id);
 
         if (foundData != null)
         {
-            TowerStats tower = FindFirstObjectByType<TowerStats>();
+            TowerStats tower = FindFirstObjectByType<TowerStats>(); // 현재 씬에서 배치된 오브젝트중 TowerStats 붙은 오브젝트 1개만 찾기
             if (tower != null)
             {
-                tower.Setup(foundData);
+                tower.SetupValue(foundData); // TowerStats 에서 받은 능력치로 설정
             }
         }
         else

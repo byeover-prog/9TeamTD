@@ -14,8 +14,8 @@ public class TowerStats : MonoBehaviour
     public int attackValue;
 
 
-    // TowerData.cs 참고하여 모두 설정해줌
-    public void Setup(TowerDatas data)
+    // 호출 받으면 TowerData.cs 참고하여 모두 설정해줌
+    public void SetupValue(TowerDatas data)
     {
         if (data == null) return;
 

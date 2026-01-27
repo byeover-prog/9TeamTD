@@ -12,6 +12,7 @@ public class TowerDatas // .json 파일과 이름과 겹치면 안 됨
     public int attackValue;
 }
 
+// TowerDatas 형식의 리스트로 만들어 관리 
 [Serializable]
 public class TowerDataList
 {
