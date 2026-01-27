@@ -14,7 +14,6 @@ public class SaveManager : MonoBehaviour
     public SaveData nowPlayer = new SaveData();
 
     [HideInInspector] public int nowSlot;
-    [SerializeField] GameObject continueButton;
 
     public static SaveManager instance;
     private void Awake()
@@ -66,14 +65,5 @@ public class SaveManager : MonoBehaviour
             return false;
         }
         return true;
-    }
-
-    void Start()
-    {
-        bool hasSave = LoadDataForPreview(nowSlot);
-        if (hasSave)
-        {
-            continueButton.SetActive(true);
-        }
     }
 }
