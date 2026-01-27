@@ -35,6 +35,7 @@ public class SaveManager : MonoBehaviour
 
     public string GetPath(int slotNum)
     {
+
         return Path.Combine(Application.persistentDataPath, $"save_{slotNum}.json");
     }
 
@@ -49,7 +50,10 @@ public class SaveManager : MonoBehaviour
         if (File.Exists(GetPath(nowSlot)))
         {
             string json = File.ReadAllText(GetPath(nowSlot));
-            nowPlayer = JsonUtility.FromJson<SaveData>(json);
+            
+            JsonUtility.FromJsonOverwrite(json, nowPlayer);
+            
+            nowPlayer.gold ??= new OP<int>();
         }
         else
         {
