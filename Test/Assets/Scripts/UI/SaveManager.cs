@@ -57,8 +57,9 @@ public class SaveManager : MonoBehaviour
         }
         else
         {
-            nowPlayer = new SaveData();
-            SaveData();
+#if UNITY_EDITOR
+            Debug.Log("파일을 불러올수 없습니다");
+#endif
         }
     }
 
