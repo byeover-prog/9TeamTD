@@ -1,18 +1,224 @@
-{
-    "towers": [
-        {
-            "towerID": 1001,
-            "towerName": "수정탑",
-            "level": 5,
-            "maxHP": 80,
-            "attackValue": 20
-        },
-        {
-            "towerID": 1002,
-            "towerName": "포탑",
-            "level": 1,
-            "maxHP": 40,
-            "attackValue": 30
-        }
-    ]
+﻿{
+  "towers" : [
+  {
+    "towerID": 1100,
+    "towerName": "수정탑",
+    "level": 1,
+    "maxHP": 10,
+    "attackValue": 20,
+    "attackType": "Projectile",
+    "attackRange": 4,
+    "attackProjectileIDs": 11001,
+    "attackSpeed": 0.5
+  },
+  {
+    "towerID": 1100,
+    "towerName": "수정탑",
+    "level": 2,
+    "maxHP": 10,
+    "attackValue": 25,
+    "attackType": "Projectile",
+    "attackRange": 4,
+    "attackProjectileIDs": 11001,
+    "attackSpeed": 0.5
+  },
+  {
+    "towerID": 1100,
+    "towerName": "수정탑",
+    "level": 3,
+    "maxHP": 10,
+    "attackValue": 31,
+    "attackType": "Projectile",
+    "attackRange": 4,
+    "attackProjectileIDs": 11001,
+    "attackSpeed": 0.5
+  },
+  {
+    "towerID": 1100,
+    "towerName": "수정탑",
+    "level": 4,
+    "maxHP": 10,
+    "attackValue": 39,
+    "attackType": "Projectile",
+    "attackRange": 4,
+    "attackProjectileIDs": 11001,
+    "attackSpeed": 0.5
+  },
+  {
+    "towerID": 1100,
+    "towerName": "천상 수정탑",
+    "level": 5,
+    "maxHP": 10,
+    "attackValue": 49,
+    "attackType": "Projectile",
+    "attackRange": 4,
+    "attackProjectileIDs": 11001,
+    "attackSpeed": 0.5
+  },
+  {
+    "towerID": 1101,
+    "towerName": "발리스타",
+    "level": 1,
+    "maxHP": 10,
+    "attackValue": 10,
+    "attackType": "Projectile",
+    "attackRange": 4,
+    "attackProjectileIDs": 11011,
+    "attackSpeed": 1
+  },
+  {
+    "towerID": 1101,
+    "towerName": "발리스타",
+    "level": 2,
+    "maxHP": 10,
+    "attackValue": 13,
+    "attackType": "Projectile",
+    "attackRange": 4,
+    "attackProjectileIDs": 11011,
+    "attackSpeed": 1.25
+  },
+  {
+    "towerID": 1101,
+    "towerName": "발리스타",
+    "level": 3,
+    "maxHP": 10,
+    "attackValue": 16,
+    "attackType": "Projectile",
+    "attackRange": 4,
+    "attackProjectileIDs": 11011,
+    "attackSpeed": 1.56
+  },
+  {
+    "towerID": 1101,
+    "towerName": "발리스타",
+    "level": 4,
+    "maxHP": 10,
+    "attackValue": 20,
+    "attackType": "Projectile",
+    "attackRange": 4,
+    "attackProjectileIDs": 11011,
+    "attackSpeed": 1.95
+  },
+  {
+    "towerID": 1101,
+    "towerName": "폭풍 발리스타",
+    "level": 5,
+    "maxHP": 10,
+    "attackValue": 25,
+    "attackType": "Projectile",
+    "attackRange": 4,
+    "attackProjectileIDs": 11011,
+    "attackSpeed": 2.44
+  },
+  {
+    "towerID": 1102,
+    "towerName": "대포",
+    "level": 1,
+    "maxHP": 10,
+    "attackValue": 15,
+    "attackType": "Projectile",
+    "attackRange": 6,
+    "attackProjectileIDs": 11021,
+    "attackSpeed": 0.5
+  },
+  {
+    "towerID": 1102,
+    "towerName": "대포",
+    "level": 2,
+    "maxHP": 10,
+    "attackValue": 17,
+    "attackType": "Projectile",
+    "attackRange": 6.9,
+    "attackProjectileIDs": 11021,
+    "attackSpeed": 0.5
+  },
+  {
+    "towerID": 1102,
+    "towerName": "대포",
+    "level": 3,
+    "maxHP": 10,
+    "attackValue": 20,
+    "attackType": "Projectile",
+    "attackRange": 7.94,
+    "attackProjectileIDs": 11021,
+    "attackSpeed": 0.5
+  },
+  {
+    "towerID": 1102,
+    "towerName": "대포",
+    "level": 4,
+    "maxHP": 10,
+    "attackValue": 23,
+    "attackType": "Projectile",
+    "attackRange": 9.13,
+    "attackProjectileIDs": 11021,
+    "attackSpeed": 0.5
+  },
+  {
+    "towerID": 1102,
+    "towerName": "바실리스크 대포",
+    "level": 5,
+    "maxHP": 10,
+    "attackValue": 26,
+    "attackType": "Projectile",
+    "attackRange": 10.5,
+    "attackProjectileIDs": 11021,
+    "attackSpeed": 0.5
+  },
+  {
+    "towerID": 1103,
+    "towerName": "화염탑",
+    "level": 1,
+    "maxHP": 10,
+    "attackValue": 40,
+    "attackType": "Projectile",
+    "attackRange": 3,
+    "attackProjectileIDs": 11031,
+    "attackSpeed": 0.25
+  },
+  {
+    "towerID": 1103,
+    "towerName": "화염탑",
+    "level": 2,
+    "maxHP": 10,
+    "attackValue": 50,
+    "attackType": "Projectile",
+    "attackRange": 3,
+    "attackProjectileIDs": 11031,
+    "attackSpeed": 0.25
+  },
+  {
+    "towerID": 1103,
+    "towerName": "화염탑",
+    "level": 3,
+    "maxHP": 10,
+    "attackValue": 63,
+    "attackType": "Projectile",
+    "attackRange": 3,
+    "attackProjectileIDs": 11031,
+    "attackSpeed": 0.25
+  },
+  {
+    "towerID": 1103,
+    "towerName": "화염탑",
+    "level": 4,
+    "maxHP": 10,
+    "attackValue": 79,
+    "attackType": "Projectile",
+    "attackRange": 3,
+    "attackProjectileIDs": 11031,
+    "attackSpeed": 0.25
+  },
+  {
+    "towerID": 1103,
+    "towerName": "용의 화염탑",
+    "level": 5,
+    "maxHP": 10,
+    "attackValue": 99,
+    "attackType": "Projectile",
+    "attackRange": 3,
+    "attackProjectileIDs": 11031,
+    "attackSpeed": 0.25
+  }
+]
 }
